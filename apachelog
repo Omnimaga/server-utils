@@ -1,0 +1,31 @@
+#!/bin/bash
+if [[ "$1" = "" ]];then
+	apachelog more;
+else
+	t=$1;
+	shift;
+	case "$t" in
+		search)
+			cat /var/log/apache2/error.log | grep "$@";
+		;;
+		ignore)
+			cat /var/log/apache2/error.log | grep -v "$@";
+		;;
+		tail)
+			if [[ "$@" == "" ]];then
+				tail -f /var/log/apache2/error.log;
+			else
+				tail --lines="$@" /var/log/apache2/error.log;
+			fi;
+		;;
+		more)
+			more /var/log/apache2/error.log;
+		;;
+		flush)
+			echo "" > /var/log/apache2/error.log;
+		;;
+		*)
+			echo "Usage: $0 [{search|ignore|tail|more|flush} <params>]";
+			exit 1;
+	esac;
+fi;

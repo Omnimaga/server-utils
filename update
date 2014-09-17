@@ -1,0 +1,12 @@
+#!/bin/bash
+if [[ $EUID -ne 0 ]];then
+	sudo $0 $@;
+	exit;
+fi;
+echo "Updating local lists";
+apt-get update;
+echo "Doing basic upgrading";
+apt-get upgrade;
+echo "Doing distro upgrading";
+apt-get dist-upgrade;
+echo "Done updating";

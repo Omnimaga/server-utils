@@ -1,0 +1,25 @@
+#!/bin/bash
+if [[ "$1" = "" ]];then
+        mysqllog more;
+else
+        t=$1;
+        shift;
+        case "$t" in
+                search)
+                        cat /var/log/mysql/error.log | grep "$@";
+                ;;
+                ignore)
+                        cat /var/log/mysql/error.log | grep -v "$@";
+                ;;
+                tail)
+                        tail --lines="$@" /var/log/mysql/error.log;
+                ;;
+                more)
+                        more /var/log/mysql/error.log;
+                ;;
+                *)
+                        echo "Usage: $0 [{search|ignore|tail|more} <params>]";
+                        exit 1;
+        esac;
+fi;
+
