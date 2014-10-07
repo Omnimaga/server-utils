@@ -27,11 +27,11 @@ addsite(){
 		echo "Site already exists";
 	else
 		if [[ "$3" != "" ]];then
-			mkdir -p "$3";
 			path="$3";
 		else
 			path="/var/www/$1";
 		fi;
+		mkdir -p "$path";
 		echo "<VirtualHost *:80>
 		ServerName $2
 		DocumentRoot $path
