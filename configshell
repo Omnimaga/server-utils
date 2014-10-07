@@ -1,0 +1,61 @@
+#!/bin/bash
+c_bold="\033[1m";
+c_norm="\033[0m";
+help(){
+	if [[ "$1" != "" ]];then
+		case "$1" in
+			addsite)
+				echo "Addsite Usage:";
+				echo "addsite <name> <host> [<path>] - adds a site to apache and enables it";
+			;;
+			help)
+				echo "Help Usage:";
+				echo "help			 - displays this message";
+				echo "help <command> - displays help for a command";
+			;;
+			*)
+				help;
+		esac;
+	else
+		echo "Commands:";
+		echo "	help";
+		echo "	addsite";
+	fi;
+}
+addsite(){
+	if [ -f /etc/apache2/sites-available/$1.conf ];then
+		echo "Site already exists";
+	else
+		if [[ "$3" != "" ]];then
+			mkdir -p "$3";
+			path="$3";
+		else
+			path="/var/www/$1";
+		fi;
+		echo "<VirtualHost *:80>
+		ServerName $2
+		DocumentRoot $path
+		<Directory $path>
+			Options +ExecCGI +Indexes +FollowSymLinks +MultiViews
+			AllowOverride All
+			RewriteEngine On
+			Order allow,deny
+			allow from all
+		</Directory>
+		ErrorLog ${APACHE_LOG_DIR}/error.log
+		CustomLog ${APACHE_LOG_DIR}/access.log combined
+		ServerAdmin admin@omnimaga.org
+	</VirtualHost>" > /etc/apache2/sites-available/$1.conf;
+		echo "Created site $1 ($2) at $path";
+		a2ensite $1;
+		sudo service apache2 reload;
+	fi;
+}
+while true; do
+	echo -ne "$c_bold$(whoami)@$(pwd)>$c_norm ";
+	read input;
+	case "$input" in
+		*)
+			eval "$input";
+	esac;
+done;
