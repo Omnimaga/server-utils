@@ -1,0 +1,28 @@
+#!/bin/bash
+if [[ "$1" = "" ]];then
+  apachelog more;
+else
+  t=$1;
+  shift;
+  case "$t" in
+    search)
+      cat /var/log/mail.log | grep "$@";
+    ;;
+    ignore)
+      cat /var/log/mail.log | grep -v "$@";
+    ;;
+    tail)
+      if [[ "$@" == "" ]];then
+        tail -f /var/log/mail.log;
+      else
+        tail --lines="$@" /var/log/mail.log;
+      fi;
+    ;;
+    more)
+      more /var/log/mail.log;
+    ;;
+    *)
+      echo "Usage: $0 [{search|ignore|tail|more} <params>]";
+      exit 1;
+  esac;
+fi;

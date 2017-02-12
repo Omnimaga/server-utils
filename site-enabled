@@ -1,0 +1,16 @@
+#!/bin/bash
+readonly ARGS="$@";
+main(){
+  local code=0;
+  local site="$(echo $1 | sed -r 's/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g')";shift
+  local output="$(apachectl -S 2> /dev/null)";
+  if [[ "$(echo $output | grep "$site")" != "" ]];then
+    echo "Enabled";
+  else
+    echo "Not Enabled";
+    code=1;
+  fi;
+  unset -f main;
+  exit $code;
+}
+main $ARGS;

@@ -1,24 +1,24 @@
 #!/bin/bash
 if [[ $EUID -ne 0 ]]; then # Force root
-	exec sudo $0 "$@";
+  exec sudo $0 "$@";
 fi;
 if [[ "$1" == "" ]];then
-	echo "Usage: $0 site [target]";
-	exit 1;
+  echo "Usage: $0 site [target]";
+  exit 1;
 fi;
 site=$(basename $1);
 ROOT=$(dirname $(realpath $0));
 if [[ "$2" == "" ]];then
-	echo "Creating site directory";
-	mkdir -p /var/www/$site;
+  echo "Creating site directory";
+  mkdir -p /var/www/$site;
 else
-	echo "Creating site symlink";
-	ln -s "$2" "/var/www/$site";
+  echo "Creating site symlink";
+  ln -s "$2" "/var/www/$site";
 fi;
 if [[ ! -f /etc/apache2/sites-available/$site.conf ]]; then
-	echo "Creating site config";
-	cp $ROOT/default.site.conf /etc/apache2/sites-available/$site.conf;
-	sed -i "s/__SITE__/$site/" /etc/apache2/sites-available/$site.conf;
+  echo "Creating site config";
+  cp $ROOT/default.site.conf /etc/apache2/sites-available/$site.conf;
+  sed -i "s/__SITE__/$site/" /etc/apache2/sites-available/$site.conf;
 fi;
 a2ensite $site;
 service apache2 reload;

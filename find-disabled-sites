@@ -1,0 +1,18 @@
+#!/bin/bash
+main(){
+  pushd /var/www/ > /dev/null;
+  ls | while read site;do
+    site="$(echo $site | sed -r 's/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g')";
+    if [ -d $site ];then
+      site-enabled "$site" > /dev/null;
+      if [ $? -ne 0 ];then
+        echo "$site is not enabled";
+      fi;
+    else
+      echo "$site is not a directory";
+    fi;
+  done;
+  popd > /dev/null;
+  unset -f main;
+}
+main;

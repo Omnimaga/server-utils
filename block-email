@@ -1,0 +1,14 @@
+#!/bin/bash
+if [[ $EUID -ne 0 ]]; then # Force root
+  exec sudo $0 "$@";
+fi;
+if [[ "$1" = "" ]];then
+  echo "Usage: $0 <email>";
+else
+  cd /etc/postfix/;
+  echo "$1 REJECT" >> sender_access;
+  postmap hash:sender_access;
+  service postfix restart;
+  service saslauthd restart;
+  service courier-authdaemon restart;
+fi;
